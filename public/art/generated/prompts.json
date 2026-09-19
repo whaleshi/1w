@@ -1,0 +1,65 @@
+{
+  "generator": "built-in imagegen",
+  "assets": [
+    {
+      "file": "art-1.png",
+      "subject": "orange cat astronaut floating among planets",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-e93620eb-acc5-479a-91b5-06c6ac6ca598.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: orange cat astronaut floating among planets. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-2.png",
+      "subject": "tiny Japanese ramen shop at rainy night",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-2fc3230c-73a0-4d99-8f67-adf414135877.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: tiny Japanese ramen shop at rainy night. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-3.png",
+      "subject": "whale swimming through pastel clouds",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-763d7898-405e-4cfa-8891-537d460f66f7.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: whale swimming through pastel clouds. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-4.png",
+      "subject": "sunflower field and cozy cottage",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-58338bd6-d85e-41cc-8c46-ff3724b73f5a.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: sunflower field and cozy cottage. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-5.png",
+      "subject": "retro racing car on sunset coastal road",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-39ed15b2-6926-47ef-88d6-eff97567b10e.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: retro racing car on sunset coastal road. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-6.png",
+      "subject": "mushroom village in enchanted forest",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-94fea122-959f-4c5b-893d-2d220e82926f.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: mushroom village in enchanted forest. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-7.png",
+      "subject": "robot tending a rooftop garden",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-44c3c7d0-895c-47a9-adf9-5a57915d373b.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: robot tending a rooftop garden. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-8.png",
+      "subject": "mountain lake with red camping tent",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-4f486961-473a-4ea4-b63e-9ca330f8d3c4.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: mountain lake with red camping tent. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-9.png",
+      "subject": "colorful coral reef and sea turtle",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-4d966dff-d230-4eab-9e3c-2c5ee055e2c0.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: colorful coral reef and sea turtle. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    },
+    {
+      "file": "art-10.png",
+      "subject": "floating island with waterfall and castle",
+      "source": "/Users/shijy/.codex/generated_images/01a0ba0a-d5b1-7e43-a377-8e81f97173d3/exec-e2ce5854-54aa-4d81-a318-3f3ddddb0d0b.png",
+      "prompt": "Use case: stylized-concept. Generate one standalone square artwork for a retro collaborative pixel-art canvas. Subject: floating island with waterfall and castle. Rich 16-bit pixel art, bold readable silhouette, carefully composed scene, saturated yet harmonious colors, crisp pixel edges. Full bleed illustration, no frame, no text, no watermark. This is a single artwork, not a sheet or collage."
+    }
+  ]
+}
