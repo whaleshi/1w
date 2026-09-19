@@ -1364,3 +1364,38 @@
     top: max(8px, env(safe-area-inset-top));
   }
 }
+
+.runningApps {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  overflow-x: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.runningApps::-webkit-scrollbar {
+  display: none;
+}
+.runningApps .taskButton {
+  flex: 0 1 205px;
+  min-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.runningApps .taskButton span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 640px) {
+  .runningApps .taskButton {
+    flex: 0 0 110px;
+    font-size: 11px;
+  }
+  .taskbar .clock {
+    flex-shrink: 0;
+    margin-left: 0;
+    padding: 5px;
+    gap: 4px;
+  }
+}

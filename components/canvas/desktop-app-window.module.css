@@ -1,0 +1,63 @@
+.app {
+  position: fixed;
+  top: 64px;
+  left: max(96px, calc(50vw - 230px));
+  width: min(460px, calc(100vw - 112px));
+  max-height: calc(100dvh - 110px);
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  filter: drop-shadow(4px 4px 0 #005f5f);
+}
+.settings {
+  top: 88px;
+  left: max(108px, calc(50vw - 190px));
+  max-height: calc(100dvh - 134px);
+}
+.title {
+  flex-shrink: 0;
+  min-height: 28px;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+.caption {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.body {
+  padding: 18px;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.app > footer {
+  flex-shrink: 0;
+}
+.maximized {
+  inset: 6px 6px 43px;
+  width: auto;
+  max-height: none;
+}
+.maximized .body {
+  flex: 1;
+}
+@media (max-width: 640px) {
+  .app {
+    left: 6px;
+    right: 6px;
+    top: 8px;
+    width: auto;
+    max-height: calc(100dvh - 54px);
+  }
+  .body {
+    padding: 12px;
+  }
+  .title {
+    cursor: default;
+  }
+  .maximized {
+    bottom: 43px;
+  }
+}

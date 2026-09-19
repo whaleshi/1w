@@ -8,6 +8,7 @@ import {
   cellId,
   validPoint,
 } from "@/lib/grid";
+import { DesktopAppWindow } from "./desktop-app-window";
 import { SwapPanel, SettingsPanel } from "./desktop-utilities";
 import { RegionImage } from "./region-image";
 import { GridBoard, MiniMap } from "./grid-board";
@@ -16,14 +17,30 @@ import { RetroDialog } from "./retro-dialog";
 import { useCanvasState } from "./use-canvas-state";
 import { useWindowDrag } from "./use-window-drag";
 import styles from "./canvas.module.css";
-type Dialog =
-  "swap" | "settings" | "wallet" | "help" | "mine" | "purchase" | null;
+type Dialog = "wallet" | "help" | "mine" | "purchase" | null;
 export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
   const { t, language } = useLanguage();
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
   const s = useCanvasState();
+  type App = "swap" | "settings";
+  const [apps, setApps] = useState<
+    Record<App, "closed" | "open" | "minimized">
+  >({ swap: "closed", settings: "closed" });
+  const [activeApp, setActiveApp] = useState<App | "canvas">("canvas");
+  const openApp = (app: App) => {
+    setApps((v) => ({ ...v, [app]: "open" }));
+    setActiveApp(app);
+  };
+  const minimizeApp = (app: App) => {
+    setApps((v) => ({ ...v, [app]: "minimized" }));
+    setActiveApp("canvas");
+  };
+  const closeApp = (app: App) => {
+    setApps((v) => ({ ...v, [app]: "closed" }));
+    setActiveApp("canvas");
+  };
   const [dialog, setDialog] = useState<Dialog>(null);
   const [multiSelect, setMultiSelect] = useState(true);
   const [zoom, setZoom] = useState(32);
@@ -66,7 +83,12 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
   return (
     <div className={styles.desktop}>
       <aside className={styles.desktopIcons} aria-label={t("桌面快捷方式")}>
-        <button onClick={() => setMinimized(false)}>
+        <button
+          onClick={() => {
+            setMinimized(false);
+            setActiveApp("canvas");
+          }}
+        >
           <PixelIcon kind="computer" />
           <span>{t("万格画布")}</span>
         </button>
@@ -78,11 +100,11 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
           <PixelIcon kind="help" />
           <span>{t("使用说明")}</span>
         </button>
-        <button onClick={() => show("swap")}>
+        <button onClick={() => openApp("swap")}>
           <PixelIcon kind="swap" />
           <span>{t("交易")}</span>
         </button>
-        <button onClick={() => show("settings")}>
+        <button onClick={() => openApp("settings")}>
           <PixelIcon kind="settings" />
           <span>{t("设置")}</span>
         </button>
@@ -93,6 +115,9 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
       </div>
       {!minimized && (
         <main
+          style={{ zIndex: activeApp === "canvas" ? 3 : 1 }}
+          onPointerDownCapture={() => setActiveApp("canvas")}
+          onFocusCapture={() => setActiveApp("canvas")}
           ref={windowRef}
           className={`window ${styles.appWindow} ${maximized ? styles.maximized : ""}`}
         >
@@ -621,20 +646,71 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
           </footer>
         </main>
       )}
+      {(["swap", "settings"] as const).map(
+        (app) =>
+          apps[app] !== "closed" && (
+            <DesktopAppWindow
+              key={app}
+              kind={app}
+              title={`${t(app === "swap" ? "交易" : "设置")}.exe`}
+              minimized={apps[app] === "minimized"}
+              active={activeApp === app}
+              onActivate={() => setActiveApp(app)}
+              onMinimize={() => minimizeApp(app)}
+              onClose={() => closeApp(app)}
+            >
+              {app === "swap" ? (
+                <SwapPanel />
+              ) : (
+                <SettingsPanel
+                  connected={s.connected}
+                  onConnect={() => s.setConnected(true)}
+                  onDisconnect={() => s.setConnected(false)}
+                />
+              )}
+            </DesktopAppWindow>
+          ),
+      )}
       <footer className={styles.taskbar}>
         <button className={styles.startButton} onClick={() => show("help")}>
           <PixelIcon small kind="computer" />
           <strong>{t("开始")}</strong>
         </button>
         <span className={styles.taskDivider} />
-        <button
-          className={styles.taskButton}
-          onClick={() => setMinimized(!minimized)}
-          aria-pressed={!minimized}
-        >
-          <PixelIcon small />
-          {t("万格画布.exe")}
-        </button>
+        <div className={styles.runningApps}>
+          <button
+            className={styles.taskButton}
+            onClick={() => {
+              if (!minimized && activeApp === "canvas") setMinimized(true);
+              else {
+                setMinimized(false);
+                setActiveApp("canvas");
+              }
+            }}
+            aria-pressed={!minimized && activeApp === "canvas"}
+          >
+            <PixelIcon small />
+            {t("万格画布.exe")}
+          </button>
+          {(["swap", "settings"] as const).map(
+            (app) =>
+              apps[app] !== "closed" && (
+                <button
+                  key={app}
+                  className={styles.taskButton}
+                  aria-pressed={apps[app] === "open" && activeApp === app}
+                  onClick={() =>
+                    apps[app] === "open" && activeApp === app
+                      ? minimizeApp(app)
+                      : openApp(app)
+                  }
+                >
+                  <PixelIcon kind={app} small />
+                  <span>{t(app === "swap" ? "交易" : "设置")}.exe</span>
+                </button>
+              ),
+          )}
+        </div>
         <span className={styles.taskbarHint}>
           {t("小小的格子，大大的互联网。")}
         </span>
@@ -646,28 +722,16 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
       {dialog && (
         <RetroDialog
           title={
-            dialog === "swap"
-              ? t("交易")
-              : dialog === "settings"
-                ? t("设置")
-                : dialog === "wallet"
-                  ? t("连接钱包")
-                  : dialog === "mine"
-                    ? t("我的作品")
-                    : dialog === "purchase"
-                      ? t("确认演示购买")
-                      : t("关于万格画布")
+            dialog === "wallet"
+              ? t("连接钱包")
+              : dialog === "mine"
+                ? t("我的作品")
+                : dialog === "purchase"
+                  ? t("确认演示购买")
+                  : t("关于万格画布")
           }
           onClose={() => setDialog(null)}
         >
-          {dialog === "swap" && <SwapPanel />}
-          {dialog === "settings" && (
-            <SettingsPanel
-              connected={s.connected}
-              onConnect={() => s.setConnected(true)}
-              onDisconnect={() => s.setConnected(false)}
-            />
-          )}
           {dialog === "wallet" && (
             <>
               <div className={styles.dialogLead}>
