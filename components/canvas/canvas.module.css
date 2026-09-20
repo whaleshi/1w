@@ -1399,3 +1399,79 @@
     gap: 4px;
   }
 }
+
+/* Keep the map viewport square inside the space available to the window. */
+.boardFrame > .viewportSlot {
+  flex: 1;
+  flex-shrink: 1;
+  min-height: 0;
+  min-width: 0;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  background: #c0c0c0;
+  overflow: hidden;
+}
+.viewportSlot .boardScroll {
+  flex: none;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 1;
+  box-shadow: 0 0 0 1px #888;
+}
+@media (max-width: 640px) {
+  .boardFrame > .viewportSlot {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+}
+
+/* Desktop windows stay compact; phones use the full work area. */
+@media (min-width: 641px) {
+  .appWindow {
+    width: min(100%, max(760px, calc(100dvh + 20px)));
+    max-width: 1120px;
+  }
+  .canvasColumn {
+    container-type: size;
+  }
+  .canvasColumn .boardFrame {
+    flex: none;
+    width: min(100%, max(100px, calc(100cqh - 190px)));
+    align-self: center;
+  }
+  .boardFrame > .viewportSlot {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 1;
+  }
+  .boardFrame .legendHint {
+    display: none;
+  }
+  .boardFrame .boardLabel > span:last-child {
+    display: none;
+  }
+  .boardFrame .gridLegend {
+    flex-wrap: wrap;
+  }
+  .canvasColumn .mapBottom {
+    margin-top: auto;
+    padding-top: 8px;
+  }
+}
+@media (max-width: 640px) {
+  .desktop {
+    padding: 0 0 37px;
+  }
+  .appWindow {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+    filter: none;
+    padding-top: max(4px, env(safe-area-inset-top));
+  }
+}

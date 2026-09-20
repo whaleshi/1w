@@ -1,4 +1,7 @@
 export const english: Record<string, string> = {
+  拖动标题栏移动窗口: "Drag the title bar to move",
+  全览: "Fit",
+  显示全部画布: "Fit entire canvas",
   演示钱包已断开: "Demo wallet disconnected",
   "保存失败，请重试。": "Save failed. Please try again.",
   "浏览器存储空间不足，未完成购买，请尝试更小的图片。":

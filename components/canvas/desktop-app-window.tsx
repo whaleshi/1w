@@ -1,5 +1,5 @@
 "use client";
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useWindowDrag } from "./use-window-drag";
 import { useLanguage } from "./use-language";
 import { PixelIcon } from "./pixel-icon";
@@ -24,8 +24,7 @@ export function DesktopAppWindow({
   children: ReactNode;
 }) {
   const { t } = useLanguage();
-  const [maximized, setMaximized] = useState(false);
-  const { windowRef, handlers } = useWindowDrag(maximized, minimized);
+  const { windowRef, handlers } = useWindowDrag(false, minimized);
   return (
     <section
       ref={windowRef}
@@ -33,7 +32,7 @@ export function DesktopAppWindow({
       aria-label={title}
       aria-hidden={minimized}
       inert={minimized}
-      className={`window ${styles.app} ${kind === "settings" ? styles.settings : ""} ${maximized ? styles.maximized : ""}`}
+      className={`window ${styles.app} ${kind === "settings" ? styles.settings : ""}`}
       style={{
         display: minimized ? "none" : undefined,
         zIndex: active ? 3 : 2,
@@ -44,10 +43,6 @@ export function DesktopAppWindow({
       <header
         className={`title-bar ${!active ? "inactive" : ""} ${styles.title}`}
         {...handlers}
-        onDoubleClick={(event) => {
-          if (!(event.target as HTMLElement).closest("button"))
-            setMaximized((v) => !v);
-        }}
       >
         <div className={`title-bar-text ${styles.caption}`}>
           <PixelIcon kind={kind} small />
@@ -58,11 +53,6 @@ export function DesktopAppWindow({
             className="minimize"
             aria-label={t("最小化")}
             onClick={onMinimize}
-          />
-          <button
-            className={maximized ? "restore" : "maximize"}
-            aria-label={t(maximized ? "还原窗口" : "最大化窗口")}
-            onClick={() => setMaximized((v) => !v)}
           />
           <button
             className="close"

@@ -1,6 +1,6 @@
 "use client";
 import { useLanguage } from "./use-language";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   CELL_PRICE,
   occupiedCount,
@@ -45,12 +45,19 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
   const [dialog, setDialog] = useState<Dialog>(null);
   const [multiSelect, setMultiSelect] = useState(true);
   const [zoom, setZoom] = useState(32);
+  const [minimumZoom, setMinimumZoom] = useState(1);
+  const previousMinimum = useRef(1);
+  const updateMinimumZoom = useCallback((next: number) => {
+    const previous = previousMinimum.current;
+    previousMinimum.current = next;
+    setMinimumZoom(next);
+    setZoom((current) => (current <= previous + 0.01 ? next : current));
+  }, []);
   const [onlyMine, setOnlyMine] = useState(false);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
-  const [maximized, setMaximized] = useState(false);
   const [minimized, setMinimized] = useState(false);
   const { windowRef, handlers: windowDragHandlers } = useWindowDrag(
-    maximized,
+    false,
     minimized,
   );
   const [time, setTime] = useState("--:--");
@@ -120,20 +127,12 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
           onPointerDownCapture={() => setActiveApp("canvas")}
           onFocusCapture={() => setActiveApp("canvas")}
           ref={windowRef}
-          className={`window ${styles.appWindow} ${maximized ? styles.maximized : ""}`}
+          className={`window ${styles.appWindow}`}
         >
           <header
             className={`title-bar ${styles.titleBar}`}
             {...windowDragHandlers}
-            title={
-              maximized
-                ? t("双击还原窗口")
-                : t("拖动标题栏移动窗口，双击最大化")
-            }
-            onDoubleClick={(event) => {
-              if (!(event.target as HTMLElement).closest("button"))
-                setMaximized((value) => !value);
-            }}
+            title={t("拖动标题栏移动窗口")}
           >
             <div className={`title-bar-text ${styles.titleText}`}>
               <PixelIcon small /> {t("万格画布.exe")}
@@ -144,12 +143,6 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                 className="minimize"
                 aria-label={t("最小化")}
                 onClick={() => setMinimized(true)}
-              />
-              <button
-                className={maximized ? "restore" : "maximize"}
-                aria-label={maximized ? t("还原窗口") : t("最大化窗口")}
-                title={t("切换窗口大小")}
-                onClick={() => setMaximized(!maximized)}
               />
               <button
                 className="close"
@@ -245,10 +238,23 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                   <span className={styles.separator} />
                   <button
                     aria-label={t("缩小画布")}
-                    disabled={zoom === 20}
-                    onClick={() => setZoom((z) => (z > 32 ? 32 : 20))}
+                    disabled={zoom <= minimumZoom + 0.001}
+                    onClick={() =>
+                      setZoom((z) =>
+                        Math.max(
+                          minimumZoom,
+                          Math.floor((z / 1.4) * 100) / 100,
+                        ),
+                      )
+                    }
                   >
                     −
+                  </button>
+                  <button
+                    onClick={() => setZoom(minimumZoom)}
+                    aria-label={t("显示全部画布")}
+                  >
+                    {t("全览")}
                   </button>
                   <span className={styles.zoomLabel}>
                     {Math.round((zoom / 32) * 100)}%
@@ -256,7 +262,11 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                   <button
                     aria-label={t("放大画布")}
                     disabled={zoom === 48}
-                    onClick={() => setZoom((z) => (z < 32 ? 32 : 48))}
+                    onClick={() =>
+                      setZoom((z) =>
+                        Math.min(48, Math.ceil(z * 1.4 * 100) / 100),
+                      )
+                    }
                   >
                     +
                   </button>
@@ -326,6 +336,8 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                 owned={s.owned}
                 zoom={zoom}
                 onZoom={setZoom}
+                minimumZoom={minimumZoom}
+                onMinimumZoom={updateMinimumZoom}
                 onlyAvailable={onlyAvailable}
                 onlyMine={onlyMine}
               />

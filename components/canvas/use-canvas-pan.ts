@@ -13,6 +13,7 @@ export function useCanvasPan(
   viewport: RefObject<HTMLDivElement | null>,
   zoom: number,
   onZoom: (value: number) => void,
+  minimumZoom: number,
 ) {
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const gesture = useRef<{
@@ -100,12 +101,13 @@ export function useCanvasPan(
     const start = pinch.current;
     if (start && a && b) {
       const next = Math.max(
-        20,
+        minimumZoom,
         Math.min(
           48,
           Math.round(
-            (start.zoom * Math.hypot(b.x - a.x, b.y - a.y)) / start.distance,
-          ),
+            ((start.zoom * Math.hypot(b.x - a.x, b.y - a.y)) / start.distance) *
+              100,
+          ) / 100,
         ),
       );
       const rect = el.getBoundingClientRect();

@@ -18,6 +18,8 @@ import { useCanvasPan } from "./use-canvas-pan";
 export function GridBoard({
   onReady,
   onZoom,
+  minimumZoom,
+  onMinimumZoom,
   selected,
   area,
   onSelect,
@@ -37,6 +39,8 @@ export function GridBoard({
   onNavigate: (p: Point) => void;
   owned: OwnedCell[];
   zoom: number;
+  minimumZoom: number;
+  onMinimumZoom: (value: number) => void;
   onZoom: (value: number) => void;
   onlyAvailable: boolean;
   onlyMine: boolean;
@@ -48,12 +52,27 @@ export function GridBoard({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const clickedSelection = useRef<Point | null>(null);
-  const pan = useCanvasPan(scrollRef, zoom, onZoom);
+  const pan = useCanvasPan(scrollRef, zoom, onZoom, minimumZoom);
   const { consumePinchZoom } = pan;
 
   const [revision, setRevision] = useState(0);
   const cell = zoom;
   const size = 100 * cell;
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    const measure = () => {
+      const available = Math.min(element.clientWidth, element.clientHeight);
+      if (available > 2)
+        onMinimumZoom(
+          Math.min(48, Math.max(0.01, Math.floor(available - 2) / 100)),
+        );
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    measure();
+    return () => observer.disconnect();
+  }, [onMinimumZoom]);
   useEffect(() => {
     let live = true;
     const sources = [
@@ -104,7 +123,7 @@ export function GridBoard({
         }
       }
     ctx.strokeStyle = "#c9c8c0";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = cell < 6 ? 0.25 : 1;
     ctx.beginPath();
     for (let i = 0; i <= 100; i++) {
       ctx.moveTo(i * cell + 0.5, 0);
@@ -169,11 +188,17 @@ export function GridBoard({
     }
     ctx.fillStyle = invalid ? "rgba(128,0,0,0.15)" : "rgba(0,0,128,0.12)";
     ctx.strokeStyle = invalid ? "#800000" : "#000080";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 3]);
+    const inset = Math.min(2, cell / 5);
+    ctx.lineWidth = Math.min(2, cell / 3);
+    ctx.setLineDash(cell < 6 ? [] : [4, 3]);
     for (const p of regionPoints(area)) {
       ctx.fillRect(p.x * cell, p.y * cell, cell, cell);
-      ctx.strokeRect(p.x * cell + 2, p.y * cell + 2, cell - 4, cell - 4);
+      ctx.strokeRect(
+        p.x * cell + inset,
+        p.y * cell + inset,
+        cell - inset * 2,
+        cell - inset * 2,
+      );
     }
     ctx.setLineDash([]);
     if (revision > 0 && onReady) {
@@ -214,50 +239,52 @@ export function GridBoard({
             : t("点击查看作品 · 拖拽移动")}
         </span>
       </div>
-      <div className={styles.boardScroll} ref={scrollRef}>
-        <canvas
-          ref={canvasRef}
-          width={size}
-          height={size}
-          className={`${styles.gridCanvas} ${pan.dragging ? styles.gridDragging : ""}`}
-          {...pan.handlers}
-          tabIndex={0}
-          role="application"
-          aria-label={`Canvas X ${selected.x} Y ${selected.y}. ${multiSelect ? t("单击多选或取消，空格切换当前格子。") : t("单击查看作品。")}`}
-          onClick={(e) => {
-            if (pan.consumeDragClick()) return;
-            const r = e.currentTarget.getBoundingClientRect();
-            const x = Math.floor((e.clientX - r.left) / cell),
-              y = Math.floor((e.clientY - r.top) / cell);
-            if (x >= 0 && y >= 0 && x < 100 && y < 100) {
-              const point = { x, y };
-              clickedSelection.current = point;
-              onSelect(point);
-            }
-          }}
-          onKeyDown={(e) => {
-            if (multiSelect && (e.key === " " || e.key === "Enter")) {
-              e.preventDefault();
-              clickedSelection.current = selected;
-              onSelect(selected);
-              return;
-            }
-            const delta: Record<string, Point> = {
-              ArrowLeft: { x: -1, y: 0 },
-              ArrowRight: { x: 1, y: 0 },
-              ArrowUp: { x: 0, y: -1 },
-              ArrowDown: { x: 0, y: 1 },
-            };
-            const d = delta[e.key];
-            if (d) {
-              e.preventDefault();
-              onNavigate({
-                x: Math.max(0, Math.min(99, selected.x + d.x)),
-                y: Math.max(0, Math.min(99, selected.y + d.y)),
-              });
-            }
-          }}
-        />
+      <div className={styles.viewportSlot}>
+        <div className={styles.boardScroll} ref={scrollRef}>
+          <canvas
+            ref={canvasRef}
+            width={size}
+            height={size}
+            className={`${styles.gridCanvas} ${pan.dragging ? styles.gridDragging : ""}`}
+            {...pan.handlers}
+            tabIndex={0}
+            role="application"
+            aria-label={`Canvas X ${selected.x} Y ${selected.y}. ${multiSelect ? t("单击多选或取消，空格切换当前格子。") : t("单击查看作品。")}`}
+            onClick={(e) => {
+              if (pan.consumeDragClick()) return;
+              const r = e.currentTarget.getBoundingClientRect();
+              const x = Math.floor((e.clientX - r.left) / cell),
+                y = Math.floor((e.clientY - r.top) / cell);
+              if (x >= 0 && y >= 0 && x < 100 && y < 100) {
+                const point = { x, y };
+                clickedSelection.current = point;
+                onSelect(point);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (multiSelect && (e.key === " " || e.key === "Enter")) {
+                e.preventDefault();
+                clickedSelection.current = selected;
+                onSelect(selected);
+                return;
+              }
+              const delta: Record<string, Point> = {
+                ArrowLeft: { x: -1, y: 0 },
+                ArrowRight: { x: 1, y: 0 },
+                ArrowUp: { x: 0, y: -1 },
+                ArrowDown: { x: 0, y: 1 },
+              };
+              const d = delta[e.key];
+              if (d) {
+                e.preventDefault();
+                onNavigate({
+                  x: Math.max(0, Math.min(99, selected.x + d.x)),
+                  y: Math.max(0, Math.min(99, selected.y + d.y)),
+                });
+              }
+            }}
+          />
+        </div>
       </div>
       <div className={styles.gridLegend}>
         <span>
