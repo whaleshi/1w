@@ -17,6 +17,7 @@ import styles from "./canvas.module.css";
 import { useCanvasPan } from "./use-canvas-pan";
 export function GridBoard({
   onReady,
+  onZoom,
   selected,
   area,
   onSelect,
@@ -36,6 +37,7 @@ export function GridBoard({
   onNavigate: (p: Point) => void;
   owned: OwnedCell[];
   zoom: number;
+  onZoom: (value: number) => void;
   onlyAvailable: boolean;
   onlyMine: boolean;
   previewImage: string;
@@ -46,7 +48,8 @@ export function GridBoard({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const clickedSelection = useRef<Point | null>(null);
-  const pan = useCanvasPan(scrollRef);
+  const pan = useCanvasPan(scrollRef, zoom, onZoom);
+  const { consumePinchZoom } = pan;
 
   const [revision, setRevision] = useState(0);
   const cell = zoom;
@@ -199,8 +202,8 @@ export function GridBoard({
     // A direct click changes selection in place; explicit navigation still reveals it.
     const fromClick = clickedSelection.current === selected;
     clickedSelection.current = null;
-    if (!fromClick) reveal();
-  }, [reveal, selected]);
+    if (!consumePinchZoom() && !fromClick) reveal();
+  }, [reveal, selected, consumePinchZoom]); // Pinch updates retain their own focal point.
   return (
     <div className={`sunken-panel ${styles.boardFrame}`}>
       <div className={styles.boardLabel}>

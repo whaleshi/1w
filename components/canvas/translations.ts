@@ -1,4 +1,5 @@
 export const english: Record<string, string> = {
+  演示钱包已断开: "Demo wallet disconnected",
   "保存失败，请重试。": "Save failed. Please try again.",
   "浏览器存储空间不足，未完成购买，请尝试更小的图片。":
     "Browser storage is full. Purchase was not completed.",

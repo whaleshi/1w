@@ -44,20 +44,22 @@
   flex: 1;
 }
 @media (max-width: 640px) {
-  .app {
-    left: 6px;
-    right: 6px;
-    top: 8px;
-    width: auto;
-    max-height: calc(100dvh - 54px);
+  .app,
+  .app.maximized {
+    inset: 0 0 37px;
+    width: 100%;
+    height: calc(100dvh - 37px);
+    max-height: none;
+    filter: none;
+    padding-top: max(4px, env(safe-area-inset-top));
+    padding-left: max(4px, env(safe-area-inset-left));
+    padding-right: max(4px, env(safe-area-inset-right));
   }
   .body {
+    flex: 1;
     padding: 12px;
   }
   .title {
     cursor: default;
-  }
-  .maximized {
-    bottom: 43px;
   }
 }

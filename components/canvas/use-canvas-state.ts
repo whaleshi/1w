@@ -32,9 +32,14 @@ export function useCanvasState() {
   const [connected, setConnected] = useState(false);
   const [image, setImage] = useState("");
   const [fileName, setFileName] = useState("");
-  const [notice, setNotice] = useState(
-    "点击空白格加入选区，再点取消；可跨位置多选后一次购买。",
-  );
+  const [noticeEvent, setNoticeEvent] = useState({
+    id: 0,
+    message: "点击空白格加入选区，再点取消；可跨位置多选后一次购买。",
+  });
+  const notice = noticeEvent.message;
+  function setNotice(message: string) {
+    setNoticeEvent((previous) => ({ id: previous.id + 1, message }));
+  }
   const current = editing
     ? uploadCells.length
       ? {
@@ -250,6 +255,7 @@ export function useCanvasState() {
     fileName,
     setFileName,
     notice,
+    noticeEvent,
     setNotice,
     current,
     occupied,

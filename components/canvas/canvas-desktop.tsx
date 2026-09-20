@@ -13,6 +13,7 @@ import { SwapPanel, SettingsPanel } from "./desktop-utilities";
 import { RegionImage } from "./region-image";
 import { GridBoard, MiniMap } from "./grid-board";
 import { PixelIcon } from "./pixel-icon";
+import { RetroToast } from "./retro-toast";
 import { RetroDialog } from "./retro-dialog";
 import { useCanvasState } from "./use-canvas-state";
 import { useWindowDrag } from "./use-window-drag";
@@ -245,7 +246,7 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                   <button
                     aria-label={t("缩小画布")}
                     disabled={zoom === 20}
-                    onClick={() => setZoom((z) => (z === 48 ? 32 : 20))}
+                    onClick={() => setZoom((z) => (z > 32 ? 32 : 20))}
                   >
                     −
                   </button>
@@ -255,7 +256,7 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                   <button
                     aria-label={t("放大画布")}
                     disabled={zoom === 48}
-                    onClick={() => setZoom((z) => (z === 20 ? 32 : 48))}
+                    onClick={() => setZoom((z) => (z < 32 ? 32 : 48))}
                   >
                     +
                   </button>
@@ -324,6 +325,7 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
                 multiSelect={onlyMine || multiSelect}
                 owned={s.owned}
                 zoom={zoom}
+                onZoom={setZoom}
                 onlyAvailable={onlyAvailable}
                 onlyMine={onlyMine}
               />
@@ -660,12 +662,25 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
               onClose={() => closeApp(app)}
             >
               {app === "swap" ? (
-                <SwapPanel />
+                <SwapPanel
+                  connected={s.connected}
+                  onConnect={() => {
+                    s.setConnected(true);
+                    s.setNotice("演示钱包已连接");
+                  }}
+                  onNotice={s.setNotice}
+                />
               ) : (
                 <SettingsPanel
                   connected={s.connected}
-                  onConnect={() => s.setConnected(true)}
-                  onDisconnect={() => s.setConnected(false)}
+                  onConnect={() => {
+                    s.setConnected(true);
+                    s.setNotice("演示钱包已连接");
+                  }}
+                  onDisconnect={() => {
+                    s.setConnected(false);
+                    s.setNotice("演示钱包已断开");
+                  }}
                 />
               )}
             </DesktopAppWindow>
@@ -719,6 +734,9 @@ export function CanvasDesktop({ onReady }: { onReady?: () => void }) {
           <span>{time}</span>
         </div>
       </footer>
+      {s.noticeEvent.id > 0 && (
+        <RetroToast key={s.noticeEvent.id} message={s.noticeEvent.message} />
+      )}
       {dialog && (
         <RetroDialog
           title={

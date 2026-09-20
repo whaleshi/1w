@@ -1,0 +1,45 @@
+.toast {
+  position: fixed;
+  inset: auto 18px 52px auto;
+  margin: 0;
+  width: min(360px, calc(100vw - 24px));
+  max-height: calc(100dvh - 76px);
+  overflow: auto;
+  z-index: 10001;
+  padding: 3px;
+  color: #222;
+  border: 0;
+  animation: appear 160ms ease-out;
+}
+.toast::backdrop {
+  background: transparent;
+  pointer-events: none;
+}
+.message {
+  margin: 0;
+  padding: 14px 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (max-width: 640px) {
+  .toast {
+    right: 12px;
+    bottom: calc(48px + env(safe-area-inset-bottom));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
